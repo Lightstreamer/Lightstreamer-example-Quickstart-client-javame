@@ -40,18 +40,15 @@ import com.lightstreamer.javameclient.midp.logger.Logger;
 
 
 /**
- * Class Tester.
+ * Class DistinctTester.
  */
-public class Tester extends MIDlet implements CommandListener {
+public class DistinctTester extends MIDlet implements CommandListener {
 
     static boolean useSingleConnection = false;
     static boolean useReusableItemUpdates = true;
     static boolean useSocket = true;
     
-    static boolean subscribeStockSimple = false;
-    static boolean subscribeStockExt = true;
-    static boolean subscribePortSimple = false;
-    static boolean subscribePortExt = false;
+    static boolean subscribeChat = true;
     
     private long hbTime = 2000;
 
@@ -91,9 +88,9 @@ public class Tester extends MIDlet implements CommandListener {
     
     
     /**
-     * Constructor Tester.
+     * Constructor DistinctTester.
      */
-    public Tester() {
+    public DistinctTester() {
         super();
 
         logger.log("TEST STARTS");
@@ -156,7 +153,7 @@ public class Tester extends MIDlet implements CommandListener {
         //change these configurations to point to your local server
         //
         myCI = new ConnectionInfo("localhost");
-        myCI.setAdapter("FULLPORTFOLIODEMO");
+        myCI.setAdapter("CHAT");
         myCI.setControlInHttps(false);
 
         myCI.setControlPort(8989);
@@ -206,55 +203,14 @@ public class Tester extends MIDlet implements CommandListener {
         
         SubscribedTableKey tableKey;
 
-        if (subscribeStockSimple) {
-            //create and subscribe a table
-            SimpleTableInfo mySTable =
-                new SimpleTableInfo("item1 item2", "stock_name last_price time",
-                                    "MERGE");
-            mySTable.setDataAdapter("QUOTE_ADAPTER");
-            mySTable.setSnaspshotRequired(true);
-            tableKey = myClient.subscribeTable(mySTable, new TestSimpleListener());
-            subscribedTables.addElement(tableKey);
-         
-            //create and subscribe the table with a different listener
-            tableKey = myClient.subscribeTable(mySTable, new TestHandyListener(3,"StockNames"), false);
-            subscribedTables.addElement(tableKey);
-        }
-        
-        if (subscribeStockExt) {
-            //create and subscribe another table            
-            ExtendedTableInfo myETable = new ExtendedTableInfo(
-                new String[]{"item1", "item2"},
-                new String[]{"stock_name", "last_price", "time"}, "MERGE");
-            myETable.setDataAdapter("QUOTE_ADAPTER");
-            myETable.setSnaspshotRequired(true);
-            tableKey = myClient.subscribeTable(myETable, new TestExtendedListener());
-            subscribedTables.addElement(tableKey);
-    
-            //create and subscribe the new table with a different listener
-            tableKey = myClient.subscribeTable(myETable, new TestHandyListener(new String[]{"stock_name", "last_price", "time"},"StockFields"), false);
-            subscribedTables.addElement(tableKey);
-        }
-        
-        if (subscribePortSimple) {
-          //create and subscribe a table in command mode
-          SimpleTableInfo mySCTable =
-              new SimpleTableInfo("portfolio1", "key command qty",
-                                  "COMMAND");
-          mySCTable.setDataAdapter("PORTFOLIO_ADAPTER");
-          mySCTable.setSnaspshotRequired(true);
-          tableKey = myClient.subscribeTable(mySCTable, new TestHandyListener(3,"PortfolioNames"), true);
-          subscribedTables.addElement(tableKey);
-        }
-        
-        if (subscribePortExt) {
-          //create and subscribe another table  in command mode
-          ExtendedTableInfo myECTable = new ExtendedTableInfo(
-              new String[]{"portfolio1"},
-              new String[]{"key", "command", "qty"}, "COMMAND");
-          myECTable.setDataAdapter("PORTFOLIO_ADAPTER");
-          myECTable.setSnaspshotRequired(true);
-          tableKey = myClient.subscribeTable(myECTable, new TestHandyListener(new String[]{"key", "command", "qty"},"PortfolioFiedls"), true);
+        if (subscribeChat) {
+          //create and subscribe a chat table
+          ExtendedTableInfo myChatTable = new ExtendedTableInfo(
+                  new String[]{"chat_room"},
+                  new String[]{"IP", "timestamp", "nick", "message"}, "DISTINCT");
+          myChatTable.setDataAdapter("CHAT_ROOM");
+          myChatTable.setSnaspshotRequired(true);
+          tableKey = myClient.subscribeTable(myChatTable, new TestHandyListener(new String[]{"IP", "timestamp", "nick", "message"},"ChatFields"), false);
           subscribedTables.addElement(tableKey);
         }
         
@@ -311,44 +267,27 @@ public class Tester extends MIDlet implements CommandListener {
         } else if (com == streaming) {
             logger.log("STREAMING CONNECTION");
             myClient.openConnection(myCI, myConnListener, myCP);
+            
+        } else if (com == sendSomeMessages) {
+            logger.log("SEND MESSAGES");
+            sendMessageResponse.show();
+            for (int i = 1; i<=100; i++) {
+                myClient.sendMessage(new MessageInfo("CHAT|Message" + i,"chat",1000),tsml);
+            }
+            
+        } else if (com == sendSomeMessagesAndClose) {
+            logger.log("SEND MESSAGES");
+            sendMessageResponse.show();
+            for (int i = 1; i<=100; i++) {
+                myClient.sendMessage(new MessageInfo("CHAT|Message" + i,"chat",1000),tsml);
+            }
+            myClient.closeConnection();
 
         } else if (com == switchHB) {
             hbTime = (hbTime > 0) ? 0 : 2000;
             logger.log("NEW REVERSE HEARTBEAT TIME " + hbTime);
             myClient.setReverseHeartbeatMillis(hbTime);
             
-        } else if (com == addTable) {
-            if (useSingleConnection) {
-                //in single connection mode we need to disconnect before change subscriptions
-                myClient.closeConnection();
-            }
-
-            logger.log("ADD A TABLE");
-            //create and configure new Table
-            ExtendedTableInfo myETable = new ExtendedTableInfo(
-                new String[]{"item1", "item11", "item3", "item2"},
-                new String[]{"stock_name", "last_price", "time"}, "MERGE");
-            myETable.setDataAdapter("QUOTE_ADAPTER");
-            myETable.setSnaspshotRequired(true);
-            myETable.setItemsRange(2, 3);
-            myETable.setRequestedBufferSize(10);
-            myETable.setRequestedMaxFrequency(1);
-            //myETable.setSelector("NO");
-            //myETable.setUnfilteredMaxFrequency();
-            //myETable.setUnlimitedBufferSize();
-            //myETable.setUnlimitedMaxFrequency();
-
-            //Subscribe the new table
-            SubscribedTableKey toAdd =
-                myClient.subscribeTable(myETable, new TestHandyListener(new String[]{"stock_name", "last_price", "time"},"AddedTable"), false);
-            //Add the table as last element of the Vector
-            subscribedTables.addElement(toAdd);
-
-            if (useSingleConnection) {
-                //singleConnectionMode: need to reconnect
-                myClient.openConnection(myCI, myConnListener);
-            }
-
         } else if (com == reduceFreq) {
             logger.log("REDUCE FREQUENCY LIMIT");
             if (useSingleConnection) {
