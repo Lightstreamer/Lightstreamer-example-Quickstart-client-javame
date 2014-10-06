@@ -9,7 +9,7 @@ This project contains the source files of a sample application that shows how th
 
 ## Details
 
-These examples, called "Tester" and "DistictTester", are not made for running on real devices, because the output is written on the console. Moreover, nothing is displayed on the display.
+These examples, called "Tester" and "DistinctTester", are not made for running on real devices, because the output is written on the console. Moreover, nothing is displayed on the display.
 
 By the current configuration, specified in `/src/javametest/Tester.java` and in `/src/javametest/DistinctTester.java`, the demos try to connect to a local installation of Lightstreamer Server. If needed, the host name, the port number, the Adapter Set name, and the Data Adapter name could be changed in the source code.
 
