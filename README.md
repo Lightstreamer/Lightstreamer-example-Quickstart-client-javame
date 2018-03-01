@@ -45,4 +45,4 @@ To build and install a version of this demo, pointing to your local Lightstreame
 ## Lightstreamer Compatibility Notes
 
 - Compatible with Lightstreamer Java ME Client API v. 3.2.1 or newer.
-- For Lightstreamer Allegro (+ Java ME Client API), Presto, Vivace.
+- Ensure that Java ME Client API is supported by Lightstreamer Server license configuration.
