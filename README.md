@@ -23,7 +23,7 @@ To build and install a version of this demo, pointing to your local Lightstreame
 
 * The `Tester` class, needs both the *PORTFOLIO_ADAPTER* (see [Lightstreamer - Portfolio Demo - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-Portfolio-adapter-java)), and the *QUOTE_ADAPTER* (see [Lightstreamer - Stock-List Demo - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-StockList-adapter-java)). Therefore, as a prerequisite, the full version of the [Lightstreamer - Portfolio Demo - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-Portfolio-adapter-java) has to be deployed on your local Lightstreamer Server instance. Please follow the instructions in [Install the Portfolio Demo](https://github.com/Lightstreamer/Lightstreamer-example-Portfolio-adapter-java#install-the-portfolio-demo) to install it.
 * The `DistinctTester` class needs the *CHAT_ROOM* Adapter, therefore, as a prerequisite, the [Lightstreamer - Basic Chat Demo - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-Chat-adapter-java) has to be deployed on your local Lightstreamer Server instance.
-* Get the *Lighstreamer SDK for Java ME Clients*: copy the `ls-j2me-client` file from the `/DOCS-SDKs/sdk_client_java_me/lib` folder of the [latest Lightstreamer distribution](http://www.lightstreamer.com/download) into the `lib` directory of the project.
+* Download the latest `ls-j2me-client.jar` file from the [Lightstreamer Java ME Client SDK resources](https://lightstreamer.com/res/ls-javame-client/latest/usage.html) into the `lib` directory of the project.
 * Build 
 
 ## See Also
